@@ -1,0 +1,13 @@
+@CHARSET "ISO-8859-1";
+
+#timeline {
+	float: left;
+	width: 80%;
+	background: silver;
+}
+
+#timeline .knob {
+	width: 20px;
+	height: 20px;
+	background: orange;
+}

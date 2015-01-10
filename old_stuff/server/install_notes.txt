@@ -1,0 +1,15 @@
+create db user:vortexuser (pwd in code: world.cpp ... at least it was on 2010-05-19)
+set postgres db to allow it to connect (pg_hba.conf : local	all	all		md5 ) ... but probably more securely than that (host list?)
+
+
+requirements to compile:
+========================
+make
+g++
+libpq-dev (http://www.postgresql.org/docs/8.0/static/libpq-build.html)
+
+
+requirements to run:
+====================
+debian Lenny (may work on others, not tested)
+? libpq5 ( think it's actually linked in; see url for libpq above )

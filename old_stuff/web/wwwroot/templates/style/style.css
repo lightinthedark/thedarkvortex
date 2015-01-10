@@ -1,0 +1,71 @@
+@CHARSET "UTF8";
+
+/* ***** General rules  ***** */
+/* sheet reset */
+html, body, div, h1, h2, h3, h4, h5, h6, h7, p, img {
+	margin: 0px;
+	padding: 0px;
+	border: 0px none;
+}
+
+body {
+	background: dimgrey;
+}
+
+
+
+/* *****  Menu section  ***** */
+
+#menu {
+	position: fixed;
+	top: 0px;
+	left: 0px;
+	right: 0px;
+	height: 30px; /* menu height */
+	margin-bottom: -30px; /* menu height */
+	background: lightgray;
+	z-index: 1000;
+}
+
+#menu_inner {
+/*	border: solid 1px darkgreen; */
+	overflow: auto;
+}
+
+#menu .menu_section {
+	float: left;
+	width: 10%;
+}
+#menu .menu_section_active {
+	float: left;
+	width: 80%;
+}
+#menu .menu_button {
+	font-weight: bold;
+}
+#menu .menu_button,
+#menu .menu_item {
+	padding: 0px 5px;
+	border-right: solid 1px black;
+	float: left;
+}
+#menu .active {
+	background: pink;
+}
+
+
+
+/* *****  Content section (general)  ***** */
+
+#content {
+	overflow: auto;
+	margin-top: 30px;  /* menu height */
+	padding: 0px 10% 50px 10%;
+	background: darkgray;
+}
+#content_inner {
+	border: solid black;
+	border-width: 0px 2px;
+	background: pink;
+}
+

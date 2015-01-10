@@ -1,0 +1,17 @@
+Math.linesIntersect = function (a1x, a1y, a2x, a2y, a3x, a3y, a4x, a4y)
+
+{
+
+	var ipoint = new Object ();
+
+	var m1 = (a1y - a2y) / (a1x - a2x);
+
+	var m2 = (a3y - a4y) / (a3x - a4x);
+
+	ipoint.x = (m1 * a1x - a1y - m2 * a3x + a3y) / (m1 - m2);
+
+	ipoint.y = a1y + (ipoint.x - a1x) * m1;
+
+	return ipoint;
+
+};

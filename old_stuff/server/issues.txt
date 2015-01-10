@@ -1,0 +1,2 @@
+
+^ "movements" table should only store currently valid movements with all order history moved to "movement_history" (yet to be created), possibly by trigger

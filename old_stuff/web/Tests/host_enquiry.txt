@@ -1,0 +1,11 @@
+Hi,
+
+I'm looking into changing my hosting provider, and found your site. After looking at your personal and reseller packages, I'd just like to clarify a couple of things. I currently host several distinct sites (with different domains and different contents) under one account with my current hosts. From the descriptions you give I'm pretty certain the same would be possible with you, but would just like to check and be sure.
+
+Also, I'm working on a site in which I plan to make extensive use of MySQL triggers and stored procedures. Do you allow use of these features? Do you also allow use of MySQL events / schedules ?
+
+I am based in the UK and site responsiveness is (of course) important to me any my UK/europe-based visitors. If you feel your service wouldn't be suitable for my needs, any recommendations you may have would be gratefully received.
+
+Thanks in advance for your help with this.
+
+:-Dave
