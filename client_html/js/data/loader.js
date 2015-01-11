@@ -1,5 +1,5 @@
 function Loader() {
-	this.urlGetUnits = $( 'input[id=apiGetUnits]' );
+	this.urlGetUnits = $( 'input[id=apiGetUnits]' ).val();
 }
 
 Loader.prototype.test = function()
@@ -11,11 +11,11 @@ Loader.prototype.getUnits = function( objCoords )
 {
 	$.ajax( {
 		url: this.urlGetUnits,
-		success: function() {
-			console.log( data );
+		success: function( objData ) {
+			console.log( 'success', objData );
 		},
-		error: function() {
-			console.log( data );
+		error: function( objData ) {
+			console.log( 'error', objData );
 		}
 	} );
 }

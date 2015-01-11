@@ -1,4 +1,6 @@
 <?php
+require( 'output'.DS.'objOutput.php' );
+
 class OutputJson extends Output
 {
 	/**
