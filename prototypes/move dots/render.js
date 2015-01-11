@@ -1,11 +1,34 @@
-function Unit(rgb, size, pos) {
+function objCanvas(canvas1, canvas2) {
+	this.canvas = document.getElementById('canvas1');
+	this.context = canvas1.getContext('2d');
+	
+	function Resize() {
+		objCanvas.canvas.width = window.innerWidth;
+		objCanvas.canvas.height = window.innerHeight;
+		Redraw(objCanvas)
+	}
+	
+	function Redraw() {
+		//redraw background
+		//redraw units
+	}
+}
+
+function Waypoint(xPos, yPos, time) {
+	this.x = xPos;
+	this.y = yPos;
+	this.t = time;
+	};
+
+
+function Unit(rgb, size, startPos) {
 	this.color = rgb;
 	this.radius = size;
-	this.position = pos;
-	this.waypoints = [];
+	this.position = [startPos.x, startPos.y];
+	this.waypoints = [startPos];
 	
 	this.addWaypoint = function(xPos, yPos, time) {
-		var wpNode = {x: xPos, y: yPos, t: time};
+		var wpNode = new Waypoint(xPos, yPos, time);
 		console.log('waypoint added: ' + xPos + ', ' + yPos + ', ' + time);
 		this.waypoints.push(wpNode);
 	};
@@ -47,6 +70,16 @@ function Unit(rgb, size, pos) {
 function Units() {
 	this.arrUnits = [];
 	
+	this.addUnit = function(objUnit) {
+		if (objUnit instanceof Unit) {
+			this.arrUnits.push(objUnit);
+			console.log('Unit added');
+		}
+		else {
+			console.log('Add Unit failed: not a Unit');
+		}
+	};
+	
 	this.renderAll = function(objCanvas) {
 		console.log('render all units');
 		for (var i = 0; i < this.arrUnits.length; i++) {
@@ -71,17 +104,18 @@ function Units() {
 
 $(document).ready( function() {
 	var objCanvas = GetCanvas(); //store canvas references
-	window.addEventListener('resize', function() {Resize (objCanvas); objUnits.renderAll(objCanvas);}, false);
-	Resize(objCanvas);
+	//window.addEventListener('resize', function() {Resize (objCanvas); objUnits.renderAll(objCanvas);}, false);
+	//Resize(objCanvas);
 	objUnits = new Units;
-	objUnits.arrUnits.push (new Unit("#F00", 10, {x: 100, y: 100}));
-	objUnits.arrUnits.push (new Unit("#0F0", 10, {x: 150, y: 110}));
+	objUnits.arrUnits.push (new Unit("#F00", 10, new Waypoint(100, 100, 0)));
+	objUnits.arrUnits.push (new Unit("#0F0", 10, new Waypoint(100, 150, 0)));
+	
 	objUnits.renderAll(objCanvas);
-	objUnits.arrUnits[0].addWaypoint(10,500, 1111111111111);
+	/*objUnits.arrUnits[0].addWaypoint(10,500, 1111111111111);
 	objUnits.arrUnits[0].addWaypoint(400,500,2222222222222);
 	objUnits.arrUnits[0].addWaypoint(400,300,3333333333333);
 	objUnits.arrUnits[1].addWaypoint(10,500, 1234567899999);
-	objUnits.arrUnits[1].addWaypoint(0,10,9000005473882);
+	objUnits.arrUnits[1].addWaypoint(0,10,9000005473882);*/
 
 	
 	//myVar = setTimeout(function(){ objUnits.arrUnits[0].update(); }, 100);
@@ -89,13 +123,10 @@ $(document).ready( function() {
 });
 
 function GetCanvas() {
-	var objCanvasRefs = {
-		canvas: '',
-		context: ''
-	};
+	var objCanvasRefs = {canvas: '', context: ''}
 
-	objCanvasRefs.canvas = document.getElementById('canvas');
-	objCanvasRefs.context = canvas.getContext('2d');
+	objCanvasRefs.canvas = document.getElementById('canvas1');
+	objCanvasRefs.context = objCanvasRefs.canvas.getContext('2d');
 
 	return objCanvasRefs;
 }
