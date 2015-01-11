@@ -1,15 +1,8 @@
-/*
-jQuery.support.cors = true;
-
-
-xhrFields: {
-    withCredentials: true
-  },
-
-*/
-
 $( function() {
-	var l = new Loader();
+	var l, g;
+	l = new Loader( $( 'div#metadata' ) );
 	l.test();
-	l.getUnits();
+	
+	g = new Game( l );
+	g.run();
 } );

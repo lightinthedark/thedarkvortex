@@ -1,0 +1,4 @@
+RewriteEngine on
+RewriteRule ^api/1.0/test/?$ test.php [NC,N]
+RewriteRule ^api/([0-9.])+/(units|map-chunks)/(core|orders)\.(json|xml)(.*)$ test.php [NC,N]
+# RewriteRule ^api/([0-9.])+/(units|map-chunks)/(core|orders)\.(json|xml)(.*)$ api.php?ver=$1&obj=$2&info=$3&format=$4$5 [NC,N]
