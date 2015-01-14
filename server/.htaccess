@@ -4,9 +4,9 @@ RewriteEngine on
 RewriteRule ^api/([0-9.]+)/test/?$ test.php [NC,L]
 
 # api
-# RewriteRule ^api/([0-9.]+)/(units|map-chunks)/(core|orders)\.(json|xml)(.*)$ test.php [NC,L]
 RewriteCond %{QUERY_STRING} !(^|&)(obj|info|format)($|=)
-RewriteRule ^api/([0-9.]+)/(units|map-chunks)/(core|orders)\.(json|xml)(.*)$ api_$1.php?obj=$2&info=$3&format=$4 [NC,L,QSA]
+RewriteRule ^api/([0-9.]+)/(units|map-chunks)/(.*)\.(json|xml)(.*)$ api_$1.php?obj=$2&info=$3&format=$4 [NC,L,QSA]
+# RewriteRule ^api/([0-9.]+)/(units|map-chunks)/(|core|orders)\.(json|xml)(.*)$ api_$1.php?obj=$2&info=$3&format=$4 [NC,L,QSA]
 
 # development experiments
 RewriteCond %{QUERY_STRING} !(^|&)(id|hack)($|=)

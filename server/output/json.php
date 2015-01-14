@@ -1,5 +1,5 @@
 <?php
-require( 'output'.DS.'objOutput.php' );
+require( 'output'.DS.'output.php' );
 
 class OutputJson extends Output
 {
