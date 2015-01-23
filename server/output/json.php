@@ -18,7 +18,7 @@ class OutputJson extends Output
 	public function renderData( $data )
 	{
 		$this->_renderHeaders();
-		echo json_encode( $data );
+		echo json_encode( $data, JSON_PRETTY_PRINT );
 	}
 	
 }
