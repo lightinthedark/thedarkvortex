@@ -10,7 +10,7 @@
    Please use that or leave.</p>
    
 <ul>
-	<li><a href="v1.0/index.html">v1.0</a></li>
+	<li><a href="v0.1/index.php">v0.1</a></li>
 </ul>
 </body>
 </html>
