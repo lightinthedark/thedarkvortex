@@ -10,9 +10,7 @@
    Please use that or leave.</p>
    
 <ul>
-	<li><a href="http://tdv-server0.lightinthedark.org.uk/api/1.0/units/core.json?id=moo">units core</a></li>
-	<li><a href="http://tdv-server0.lightinthedark.org.uk/api/1.0/test">test up-ness</a></li>
-	<li><a href="http://tdv-server0.lightinthedark.org.uk/dev/1.0/foo?bar=baz">dev page</a></li>
+	<li><a href="v0.1/index.php">v0.1</a></li>
 </ul>
 </body>
 </html>

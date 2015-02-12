@@ -11,6 +11,11 @@ Game.prototype.init = function()
 		this._logError.bind( this, 'ajax' )
 	);
 	
+	this.ldrLoader.getUnitsWaypoints().then(
+			this._updateWaypoints.bind( this ),
+			this._logError.bind( this, 'ajax' )
+	);
+	
 	/*
 	// could do
 	$.when( l.getUnits() ).then( ... );
@@ -26,6 +31,11 @@ Game.prototype.run = function()
 Game.prototype._updateUnits = function( objData )
 {
 	console.log( 'updating units', objData );
+}
+
+Game.prototype._updateWaypoints = function( objData )
+{
+	console.log( 'updating waypoints', objData );
 }
 
 Game.prototype._logError = function( strType, mixData )

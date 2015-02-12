@@ -27,7 +27,7 @@ class ObjectUnits extends ObjectAbstract
 	/**
 	 * Get the orders for some / all units for some / all time
 	 */
-	function getOrders()
+	function getWaypoints()
 	{
 		return array(
 			'a'=>array(

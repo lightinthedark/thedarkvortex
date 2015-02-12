@@ -50,13 +50,13 @@ Loader.prototype.getUnitsCore = function( mixSpecifier )
 }
 
 /**
- * Accesses units/orders.json[?{range=rngRange~|id=arrIds|id=strId}]
+ * Accesses units/waypoints.json[?{range=rngRange~|id=arrIds|id=strId}]
  */
-Loader.prototype.getUnitsOrders = function( mixSpecifier )
+Loader.prototype.getUnitsWaypoints = function( mixSpecifier )
 {
 	var strUrl;
 	
-	strUrl = this.apiUrl + 'units/orders.json';
+	strUrl = this.apiUrl + 'units/waypoints.json';
 	strSpec = this._parseSpecifier( mixSpecifier );
 	if( strSpec !== '' ) {
 		strUrl += '?' + strSpec;

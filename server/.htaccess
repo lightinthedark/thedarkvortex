@@ -1,12 +1,11 @@
 RewriteEngine on
 
 # connectivity test
-RewriteRule ^api/([0-9.]+)/test/?$ test.php [NC,L]
+RewriteRule ^api/([0-9]+.[0-9]+)/test/?$ v$1/test.php [NC,L]
 
-# api
+# api version >= 0.1
 RewriteCond %{QUERY_STRING} !(^|&)(obj|info|format)($|=)
-RewriteRule ^api/([0-9.]+)/(units|map-chunks)/(.*)\.(json|xml)(.*)$ api_$1.php?obj=$2&info=$3&format=$4 [NC,L,QSA]
-# RewriteRule ^api/([0-9.]+)/(units|map-chunks)/(|core|orders)\.(json|xml)(.*)$ api_$1.php?obj=$2&info=$3&format=$4 [NC,L,QSA]
+RewriteRule ^api/([0-9]+.[0-9]+)/(units|map-chunks)/([a-z]*)\.(json|xml)(.*)$ v$1/api.php?obj=$2&info=$3&format=$4 [NC,L,QSA]
 
 # development experiments
 RewriteCond %{QUERY_STRING} !(^|&)(id|hack)($|=)
