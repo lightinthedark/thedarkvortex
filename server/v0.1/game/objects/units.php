@@ -29,17 +29,18 @@ class ObjectUnits extends ObjectAbstract
 	 */
 	function getWaypoints()
 	{
+		$t = time();
 		return array(
 			'a'=>array(
-				array( 'x'=> 5, 'y'=>10, 't'=> 2 ),
-				array( 'x'=>12, 'y'=> 8, 't'=> 6 ),
-				array( 'x'=>14, 'y'=>20, 't'=>20 ),
+				array( 'x'=> 5, 'y'=>10, 't'=> 2 + $t ),
+				array( 'x'=>12, 'y'=> 8, 't'=> 6 + $t ),
+				array( 'x'=>14, 'y'=>20, 't'=>20 + $t ),
 			),
 			'b'=>array(
-				array( 'x'=>20, 'y'=> 8, 't'=> 2 ),
-				array( 'x'=>5,  'y'=> 8, 't'=> 6 ),
-				array( 'x'=>20, 'y'=>16, 't'=>10 ),
-				array( 'x'=>25, 'y'=>25, 't'=>20 ),
+				array( 'x'=>20, 'y'=> 8, 't'=> 2 + $t ),
+				array( 'x'=>5,  'y'=> 8, 't'=> 6 + $t ),
+				array( 'x'=>20, 'y'=>16, 't'=>10 + $t ),
+				array( 'x'=>25, 'y'=>25, 't'=>20 + $t ),
 			),
 		);
 	}
