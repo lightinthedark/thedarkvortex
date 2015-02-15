@@ -11,6 +11,7 @@
    
 <ul>
 	<li><a href="v0.1/index.php">v0.1</a></li>
+	<li><a href="v0.2/index.php">v0.2</a></li>
 </ul>
 </body>
 </html>

@@ -50,13 +50,29 @@ Loader.prototype.getUnitsCore = function( mixSpecifier )
 }
 
 /**
- * Accesses units/waypoints.json[?{range=rngRange~|id=arrIds|id=strId}]
+ * Accesses waypoints/list.json[?{range=rngRange~|id=arrIds|id=strId}]
  */
-Loader.prototype.getUnitsWaypoints = function( mixSpecifier )
+Loader.prototype.getWaypointsList = function( mixSpecifier )
 {
 	var strUrl;
 	
-	strUrl = this.apiUrl + 'units/waypoints.json';
+	strUrl = this.apiUrl + 'waypoints/list.json';
+	strSpec = this._parseSpecifier( mixSpecifier );
+	if( strSpec !== '' ) {
+		strUrl += '?' + strSpec;
+	}
+	
+	return $.ajax( { url: strUrl } );
+}
+
+/**
+ * Accesses waypoints/for_units.json[?{range=rngRange~|id=arrIds|id=strId}]
+ */
+Loader.prototype.getWaypointsForUnits = function( mixSpecifier )
+{
+	var strUrl;
+	
+	strUrl = this.apiUrl + 'waypoints/forunits.json';
 	strSpec = this._parseSpecifier( mixSpecifier );
 	if( strSpec !== '' ) {
 		strUrl += '?' + strSpec;
