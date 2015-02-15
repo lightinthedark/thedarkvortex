@@ -11,7 +11,12 @@ Game.prototype.init = function()
 		this._logError.bind( this, 'ajax' )
 	);
 	
-	this.ldrLoader.getUnitsWaypoints().then(
+	this.ldrLoader.getWaypointsList().then(
+			this._updateWaypoints.bind( this ),
+			this._logError.bind( this, 'ajax' )
+	);
+	
+	this.ldrLoader.getWaypointsForUnits().then(
 			this._updateWaypoints.bind( this ),
 			this._logError.bind( this, 'ajax' )
 	);
