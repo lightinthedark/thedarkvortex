@@ -11,11 +11,16 @@ class ObjectWaypoints extends ObjectAbstract
 	 */
 	public function getList()
 	{
-		$st = $this->_getBoundStmt( $unit, $time, $point );
+		$st = $this->_getBoundStmt();
 		
 		$r = array();
 		while( $row = $st->fetch( PDO::FETCH_BOUND ) ) {
-			$r[] = array( 'x'=>$point['x'], 'y'=>$point['y'], 't'=>$time, 'unit'=>$unit );
+			$r[ $this->_d['id'] ] = array(
+				'id'=>$this->_d['id'],
+				'x'=>$this->_d['point']['x'],
+				'y'=>$this->_d['point']['y'],
+				't'=>$this->_d['time'],
+				'unit'=>$this->_d['unit'] );
 		}
 		
 		return $r;
@@ -26,15 +31,20 @@ class ObjectWaypoints extends ObjectAbstract
 	 */
 	function getForunits()
 	{
-		$st = $this->_getBoundStmt( $unit, $time, $point );
+		$st = $this->_getBoundStmt();
 		
 		$r = array();
 		while( $row = $st->fetch( PDO::FETCH_BOUND ) ) {
-			if( !isset( $r[ $unit ] ) ) {
-				$r[ $unit ] = array();
+			if( !isset( $r[ $this->_d['unit'] ] ) ) {
+				$r[ $this->_d['unit'] ] = array();
 			}
 			
-			$r[ $unit ][] = array( 'x'=>$point['x'], 'y'=>$point['y'], 't'=>$time );
+			$r[ $this->_d['unit'] ][ $this->_d['id'] ] = array(
+				'id'=>$this->_d['id'],
+				'x'=>$this->_d['point']['x'],
+				'y'=>$this->_d['point']['y'],
+				't'=>$this->_d['time']
+			);
 		}
 		
 		return $r;
@@ -44,19 +54,20 @@ class ObjectWaypoints extends ObjectAbstract
 	 * Prepares a statement to retrieve waypoint data into variables
 	 * @return PDOStatement
 	 */
-	function _getBoundStmt( &$unit, &$time, &$point )
+	function _getBoundStmt()
 	{
 		$db = Database::getDB();
 		
 		$st = $db->prepare(
-			      'SELECT unit_id, UNIX_TIMESTAMP( time ) AS time, X( point ) AS px, Y( point ) AS py'
+			      'SELECT id, unit_id, UNIX_TIMESTAMP( time ) AS time, X( point ) AS px, Y( point ) AS py'
 			."\n".'FROM waypoints'
 			."\n".'ORDER BY time ASC' );
 		$st->execute();
-		$st->bindColumn( 'unit_id', $unit,       PDO::PARAM_INT );
-		$st->bindColumn( 'time',    $time,       PDO::PARAM_INT );
-		$st->bindColumn( 'px',      $point['x'], PDO::PARAM_INT );
-		$st->bindColumn( 'py',      $point['y'], PDO::PARAM_INT );
+		$st->bindColumn( 'id',      $this->_d['id'],         PDO::PARAM_INT );
+		$st->bindColumn( 'unit_id', $this->_d['unit'],       PDO::PARAM_INT );
+		$st->bindColumn( 'time',    $this->_d['time'],       PDO::PARAM_INT );
+		$st->bindColumn( 'px',      $this->_d['point']['x'], PDO::PARAM_INT );
+		$st->bindColumn( 'py',      $this->_d['point']['y'], PDO::PARAM_INT );
 		
 		return $st;
 	}
