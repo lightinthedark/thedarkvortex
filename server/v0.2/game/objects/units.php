@@ -17,6 +17,11 @@ class ObjectUnits extends ObjectAbstract
 	var $_d = array();
 	
 	
+	/* ============== *
+	 * Public getters *
+	 * ============== */
+	
+	
 	/**
 	 * Alias for getCore
 	 */

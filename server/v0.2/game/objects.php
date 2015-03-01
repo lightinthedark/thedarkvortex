@@ -51,6 +51,12 @@ abstract class ObjectAbstract
 	protected function _getBoundStmt( $selects, $requirements = null )
 	{
 		$selects = array_intersect( $selects, array_keys( $this->_properties ) );
+		$selectStrs = array();
+		foreach( $selects as $col ) {
+			$selectStrs[ $col ] = isset( $this->_properties[ $col ][ 'selector' ] )
+				? $this->_properties[ $col ][ 'selector' ].' AS '.$col
+				: $col;
+		}
 		
 		if( is_null( $requirements ) ) {
 			$requirements = $this->_getRequirementsFromRequest();
@@ -97,7 +103,7 @@ abstract class ObjectAbstract
 		$db = Database::getDB();
 		
 		$st = $db->prepare(
-				'SELECT '.implode( ', ', $selects )
+				'SELECT '.implode( ', ', $selectStrs )
 				."\n".'FROM '.$this->_table
 				.$where
 				."\n".'ORDER BY id ASC' );
@@ -109,8 +115,8 @@ abstract class ObjectAbstract
 		
 		// execute prep statement to get all requested data that match criteria
 		$st->execute();
-//		var_dump( 'query', $st->queryString );
-//		var_dump( 'err:', $st->errorInfo() );
+// 		var_dump( 'query', $st->queryString );
+// 		var_dump( 'err:', $st->errorInfo() );
 		
 		foreach( $selects as $col ) {
 			$st->bindColumn( $col, $this->_getVarForCol( $col ), $this->_properties[ $col ][ 'pdo_type' ] );
@@ -174,7 +180,12 @@ abstract class ObjectAbstract
 	protected function _createInClause( $col, $vals )
 	{
 		$colPos = array_search( $col, array_keys( $this->_properties ) );
-		$str = $col.' IN ( NULL'; // invalid id will never add to results, gives starter for comma-separated list
+		
+		$col = isset( $this->_properties[ $col ][ 'selector' ] )
+			? $this->_properties[ $col ][ 'selector' ]
+			: $col;
+		
+		$str = $col.' IN ( NULL'; // nothing in clause means nothing in results; gives starter for comma-separated list
 		if( !( empty( $vals ) || $colPos === false ) ) {
 			foreach( $vals as $k=>$v ) {
 				$str .= ',:'.$colPos.'_'.$k;

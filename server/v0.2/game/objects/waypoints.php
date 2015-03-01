@@ -1,17 +1,66 @@
 <?php
-require( 'game'.DS.'objects.php' );
+require_once( 'game'.DS.'objects.php' );
 
 /**
  * Units are the players' agents in the game world
  */
 class ObjectWaypoints extends ObjectAbstract
 {
+	var $_object = 'wpnt';
+	var $_table  = 'waypoints';
+	var $_properties = array(
+		'id'      =>array( 'pdo_type'=>PDO::PARAM_INT ),
+		'x'       =>array( 'pdo_type'=>PDO::PARAM_INT, 'selector'=>'X( point )' ),
+		'y'       =>array( 'pdo_type'=>PDO::PARAM_INT, 'selector'=>'Y( point )' ),
+		't'       =>array( 'pdo_type'=>PDO::PARAM_STR, 'selector'=>'UNIX_TIMESTAMP( time )' ),
+		'time'    =>array( 'pdo_type'=>PDO::PARAM_STR, 'selector'=>'UNIX_TIMESTAMP( time )' ),
+		'unit_id' =>array( 'pdo_type'=>PDO::PARAM_INT )
+	);
+	var $_d = array();
+	
+	/**
+	 * Implements the general behaviour that each column has a matching entry in the internal data array
+	 * Returns by reference so it can be used when binding queries etc
+	 * Should be overridden if the data structure is more complex
+	 * @param string $col  The column name whose data var is required
+	 */
+	protected function &_getVarForCol( $col )
+	{
+		switch( $col ) {
+			case( 'x' ):
+			case( 'y' ):
+				return $this->_d[ 'point' ][ $col ];
+			break;
+			
+			case( 't' ):
+				return $this->_d[ 'time' ][ $col ];
+			break;
+			
+			default:
+				return parent::_getVarForCol( $col );
+			break;
+		}
+	}
+	
+	
+	/* ============== *
+	 * Public getters *
+	 * ============== */
+		
+	
+	/**
+	 * Alias for getList
+	 */
+	public function get() {
+		return $this->getList();
+	}
+	
 	/**
 	 * Get core information on some / all units for some timeframe
 	 */
 	public function getList()
 	{
-		$st = $this->_getBoundStmt();
+		$st = $this->_getBoundStmt( array( 'id', 'x', 'y', 'time', 'unit_id' ));
 		
 		$r = array();
 		while( $row = $st->fetch( PDO::FETCH_BOUND ) ) {
@@ -31,15 +80,15 @@ class ObjectWaypoints extends ObjectAbstract
 	 */
 	function getForunits()
 	{
-		$st = $this->_getBoundStmt();
+		$st = $this->_getBoundStmt( array( 'id', 'x', 'y', 'time', 'unit_id' ));
 		
 		$r = array();
 		while( $row = $st->fetch( PDO::FETCH_BOUND ) ) {
-			if( !isset( $r[ $this->_d['unit'] ] ) ) {
-				$r[ $this->_d['unit'] ] = array();
+			if( !isset( $r[ $this->_d['unit_id'] ] ) ) {
+				$r[ $this->_d['unit_id'] ] = array();
 			}
 			
-			$r[ $this->_d['unit'] ][ $this->_d['id'] ] = array(
+			$r[ $this->_d['unit_id'] ][ $this->_d['id'] ] = array(
 				'id'=>$this->_d['id'],
 				'x'=>$this->_d['point']['x'],
 				'y'=>$this->_d['point']['y'],
@@ -48,28 +97,6 @@ class ObjectWaypoints extends ObjectAbstract
 		}
 		
 		return $r;
-	}
-	
-	/**
-	 * Prepares a statement to retrieve waypoint data into variables
-	 * @return PDOStatement
-	 */
-	function _getBoundStmt()
-	{
-		$db = Database::getDB();
-		
-		$st = $db->prepare(
-			      'SELECT id, unit_id, UNIX_TIMESTAMP( time ) AS time, X( point ) AS px, Y( point ) AS py'
-			."\n".'FROM waypoints'
-			."\n".'ORDER BY time ASC' );
-		$st->execute();
-		$st->bindColumn( 'id',      $this->_d['id'],         PDO::PARAM_INT );
-		$st->bindColumn( 'unit_id', $this->_d['unit'],       PDO::PARAM_INT );
-		$st->bindColumn( 'time',    $this->_d['time'],       PDO::PARAM_INT );
-		$st->bindColumn( 'px',      $this->_d['point']['x'], PDO::PARAM_INT );
-		$st->bindColumn( 'py',      $this->_d['point']['y'], PDO::PARAM_INT );
-		
-		return $st;
 	}
 	
 	/*
