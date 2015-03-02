@@ -1,11 +1,13 @@
 <?php
 class Database
 {
-	function getDB()
+	private static $_connection;
+	
+	public static function getDB()
 	{
-		if( !isset( $this->connection ) ) {
+		if( !isset( self::$_connection ) ) {
 			try {
-				$this->connection = new PDO(
+				self::$_connection = new PDO(
 					'mysql:host='.Config::$db_server.';dbname='.Config::$db_database.';charset=utf8',
 					Config::$db_user,
 					Config::$db_pwd
@@ -17,12 +19,12 @@ class Database
 			}
 		}
 		
-		return $this->connection;
+		return self::$_connection;
 	}
 	
 	function close()
 	{
-		$this->connection = null;
+		self::$_connection = null;
 	}
 }
 ?>

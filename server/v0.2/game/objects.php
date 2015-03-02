@@ -1,4 +1,19 @@
 <?php
+require_once( 'lib'.DS.'requirement.php' );
+
+class ObjectLoader
+{
+	public static function _( $objType )
+	{
+		$objInfo = Config::$knownObjects;
+		if( isset( $objInfo[ $objType ] ) && !class_exists( $objInfo[ $objType ][ 'class' ] ) ) {
+			require 'game'.DS.'objects'.DS.$objInfo[ $objType ][ 'file' ];
+		}
+		
+		return new $objInfo[ $objType ][ 'class' ]();
+	}
+}
+
 /**
  * All API-able game objects (Units, Map-Chunks etc) extend this
  */
@@ -12,7 +27,6 @@ abstract class ObjectAbstract
 	 * $_properties
 	 * $_d
 	 */
-	var $_knownObjects = array( 'unit', 'wpnt', 'mapc', 'plyr' );
 	
 	public function __call( $strName, $arrArgs )
 	{
@@ -30,6 +44,11 @@ abstract class ObjectAbstract
 		return array( 'status'=>'error', 'message'=>'function did not exist' );
 	}
 	
+	public function findProperty( $prop )
+	{
+		return $this->_properties[ $prop ];;
+	}
+	
 	/**
 	 * Implements the general behaviour that each column has a matching entry in the internal data array
 	 * Returns by reference so it can be used when binding queries etc
@@ -45,7 +64,7 @@ abstract class ObjectAbstract
 	
 	/**
 	 * Prepares a statement to retrieve this object's data into variables
-	 * convert id=... or coords=... into an array of user-accessible ids
+	 * convert id=... or coords=... etc into relevant "WHERE" clauses
 	 * @return PDOStatement
 	 */
 	protected function _getBoundStmt( $selects, $requirements = null )
@@ -62,42 +81,43 @@ abstract class ObjectAbstract
 			$requirements = $this->_getRequirementsFromRequest();
 		}
 		
-		// convert requirements to where clauses
-		$also = array();
-		$wheres = array();
-		foreach( $requirements as $k=>$v ) {
-			if( substr( $k, 4, 1 ) !== '_' ) {
-				continue; // skip things that obviously aren't [a-z]{4}_.*
-			}
-			
-			$objectType = substr( $k, 0, 4 );
-			$col = substr( $k, 5 );
-			if( $objectType === $this->_object ) {
-				if( isset( $this->_properties[ $col ] ) ) {
-					$wheres[ $col ][] = $this->_toArray( $v );
-				}
-			}
-			else {
-				if( array_search( $objectType, $this->_knownObjects ) !== false ) {
-					$also[ $objectType ] = true;
-				}
-			}
+		$nativeRequirements = isset( $requirements[ $this->_object ] )
+			? $requirements[ $this->_object ]
+			: array();
+		unset( $requirements[ $this->_object ] );
+		unset( $requirements[ '_undefined' ] );
+		
+		// turn foreign requirements into native requirements
+		foreach( $requirements as $object=>$properties ) {
+			// create (autoload?) object class
+			// naturalisedRequirements = obj->naturalise( $this->_object, $properties )
+			// foreach( naturalisedRequirements as $prop=>$req ) {
+			//     $nativeRequirements[] = $req
 		}
 		
-		// do "also" things to get arrays of ids that this table can use
-		// ****
-		
-		// reduce all where-in-value-list clauses to a single array each
-		foreach( $wheres as $col=>$vals ) {
-			$vals = $this->_flattenArrays( $vals );
-			$wheres[ $col ] = $vals;
-			$whereStrs[ $col ] = $this->_createInClause( $col, $vals );
+		// combine all requirements we can to create a minimal set
+		for( $curId = count( $nativeRequirements ) - 1; $curId >= 0; $curId-- ) {
+			$curReq = $nativeRequirements[ $curId ];
+			for( $i = $curId - 1; $i >= 0; $i-- ) {
+				$newReq = $nativeRequirements[ $i ]->combine( $curReq );
+				if( $newReq !== false ) {
+					$nativeRequirements[ $i ] = $newReq;
+					unset( $nativeRequirements[ $curId ] );
+					$i = 0;
+				}
+			}
 		}
 		
 		// put all "where" clauses into a string for the prepared statement
-		$where = empty( $whereStrs )
-			? ''
-			: "\n".'WHERE '.implode( "\n AND ", $whereStrs );
+		if( empty( $nativeRequirements ) ) {
+			$where = '';
+		}
+		else {
+			foreach( $nativeRequirements as $req ) {
+				$whereStrs[] = $req->getWhereClause();
+			}
+			$where = "\n".'WHERE '.implode( "\n AND ", $whereStrs );
+		}
 		
 		// create the statement
 		$db = Database::getDB();
@@ -108,9 +128,9 @@ abstract class ObjectAbstract
 				.$where
 				."\n".'ORDER BY id ASC' );
 		
-		// bind all "where" clauses
-		foreach( $wheres as $col=>$vals ) {
-			$this->_bindInClause( $col, $vals, $st, PDO::PARAM_INT );
+		// bind all requirements
+		foreach( $nativeRequirements as $req ) {
+			$req->bindWhereClause( $st );
 		}
 		
 		// execute prep statement to get all requested data that match criteria
@@ -132,78 +152,13 @@ abstract class ObjectAbstract
 	 */
 	protected function _getRequirementsFromRequest()
 	{
+		
 		$r = array();
 		foreach( $_GET as $k=>$v ) {
-			$r[ $k ] = json_decode( $v );
+			$req = Requirement::create( $k, $v );
+			$r[ $req->getObjectType() ][] = $req;
 		}
 		return $r;
-	}
-	
-	/**
-	 * Ensure the given value is an array, making it so if it isn't
-	 * 
-	 * @param multitype:mixed $v  The value to array-ify
-	 * @return array  The array $v or array( $v )
-	 */
-	protected function _toArray( $v )
-	{
-		if( !is_array( $v ) ) {
-			if( empty( $v ) ) {
-				$v = array();
-			}
-			else {
-				$v = array( $v );
-			}
-		}
-		return $v;
-	}
-	
-	/**
-	 * Combine a bunch of arrays into a single array
-	 * 
-	 * "reduce?"
-	 * @param array $ids  An array of arrays of vaules to merge
-	 * @return multitype:
-	 */
-	protected function _flattenArrays( $ids )
-	{
-		$ret = array();
-		foreach( $ids as $arr ) {
-			foreach( $arr as $id ) {
-				$ret[ $id ] = true;
-			}
-		}
-		
-		return array_keys( $ret );
-	}
-	
-	protected function _createInClause( $col, $vals )
-	{
-		$colPos = array_search( $col, array_keys( $this->_properties ) );
-		
-		$col = isset( $this->_properties[ $col ][ 'selector' ] )
-			? $this->_properties[ $col ][ 'selector' ]
-			: $col;
-		
-		$str = $col.' IN ( NULL'; // nothing in clause means nothing in results; gives starter for comma-separated list
-		if( !( empty( $vals ) || $colPos === false ) ) {
-			foreach( $vals as $k=>$v ) {
-				$str .= ',:'.$colPos.'_'.$k;
-			}
-		}
-		$str .= ')';
-		
-		return $str;
-	}
-	
-	protected function _bindInClause( $col, $vals, $st, $dataType )
-	{
-		$colPos = array_search( $col, array_keys( $this->_properties ) );
-		if( !( empty( $vals ) || $colPos === false ) ) {
-			foreach( $vals as $k=>$v ) {
-				$st->bindValue( ':'.$colPos.'_'.$k, $v, $dataType );
-			}
-		}
 	}
 	
 }

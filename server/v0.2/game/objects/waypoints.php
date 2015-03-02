@@ -69,7 +69,7 @@ class ObjectWaypoints extends ObjectAbstract
 				'x'=>$this->_d['point']['x'],
 				'y'=>$this->_d['point']['y'],
 				't'=>$this->_d['time'],
-				'unit'=>$this->_d['unit'] );
+				'unit'=>$this->_d['unit_id'] );
 		}
 		
 		return $r;

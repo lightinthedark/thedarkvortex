@@ -44,6 +44,14 @@
 					)
 				) );
 			?>">all waypoints anywhere from 20s ago to 20s in the future</a></li>
+			<li><a href="http://tdv-server0.lightinthedark.org.uk/api/0.2/waypoints/list.json?wpnt_range=<?php
+				echo htmlspecialchars( json_encode(
+					array(
+						'from'=>array( 'x'=>'20', 'y'=>'30', 't'=>'*' ),
+						'to'  =>array( 'x'=>'60', 'y'=>'70', 't'=>'*' )
+					)
+				) );
+			?>">all waypoints anywhere between 20,20 and 60,70 at any time</a></li>
 			<li><a href="http://tdv-server0.lightinthedark.org.uk/api/0.2/waypoints/forunits.json">waypoints for all units</a></li>
 			<li><a href="http://tdv-server0.lightinthedark.org.uk/api/0.2/waypoints/forunits.json?unit_id=4">waypoints for unit 4</a></li>
 		</ul>

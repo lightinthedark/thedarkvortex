@@ -1,7 +1,7 @@
 <?php
 class Game
 {
-	function getObjectHandler( $strObject )
+	public static function getObjectHandler( $strObject )
 	{
 		$strHandlerPath = 'game'.DS.'objects'.DS.str_replace( array( '/', '\\' ), '_', $strObject ).'.php';
 		if( file_exists( $strHandlerPath ) ) {

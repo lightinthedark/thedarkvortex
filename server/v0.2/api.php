@@ -1,6 +1,7 @@
 <?php
 $debug = true;
 if( $debug ) { ob_start(); }
+error_reporting( $debug ? E_ALL : E_NONE );
 
 // set up the application
 require( 'configuration.php' );

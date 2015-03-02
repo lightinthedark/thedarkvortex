@@ -1,7 +1,7 @@
 <?php
 class Request
 {
-	function get( $key, $default )
+	public static function get( $key, $default )
 	{
 		if( isset( $_GET[ $key ]     ) ) { $retVal = $_GET[ $key ]; }
 		elseif( isset( $_POST[ $key ]    ) ) { $retVal = $_POST[ $key ]; }
@@ -13,7 +13,7 @@ class Request
 		return $retVal;
 	}
 	
-	function getServer( $key, $default )
+	public static function getServer( $key, $default )
 	{
 		if( isset( $_SERVER[ $key ] ) ) { $retVal = $_SERVER[ $key ]; }
 		else { $retVal = $default; }
