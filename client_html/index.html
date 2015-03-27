@@ -6,8 +6,14 @@
 <script charset="UTF-8" src="js/data/loader.js"></script>
 <script charset="UTF-8" src="js/game/init.js"></script>
 <script charset="UTF-8" src="js/game/game.js"></script>
+<script charset="UTF-8" src="js/game/renderer.js"></script>
 <script charset="UTF-8" src="js/game/point.js"></script>
+<script charset="UTF-8" src="js/game/lint.js"></script>
 <script charset="UTF-8" src="js/game/range.js"></script>
+<script charset="UTF-8" src="js/game/map.js"></script>
+<script charset="UTF-8" src="js/game/unit.js"></script>
+<script charset="UTF-8" src="js/game/units.js"></script>
+<script charset="UTF-8" src="js/game/clickhandler.js"></script>
 
 <link rel="stylesheet" href="style/main.css" />
 
@@ -17,6 +23,12 @@
 <div id="metadata">
 	<input type="hidden" id="apiUrl" value="http://tdv-server0.lightinthedark.org.uk/api/1.0/" />
 </div>
+<div id="renderLayers">
+	<canvas id="ui"></canvas>
+	<canvas id="units"></canvas>
+	<canvas id="terrain"></canvas>
+</div>
+<div id="clickLayer"></div>
 
 </body>
 </html>

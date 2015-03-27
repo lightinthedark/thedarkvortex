@@ -2,12 +2,13 @@ function Map(canvas, context) {
 
 	console.log('new Map');
 	
-	this.offset = {x: -500, y: -500}; //initialise viewing position
+	this.offset = {x: -500, y: -500}; // initialise viewing position
 	this.scale  = 1;
 	this.cnv = canvas;
 	this.ctx = context;
 	
-	this.bounds = { //playing area dimensions
+	// play area dimensions – change to just width and height!
+	this.bounds = {
 		top: 0,
 		bottom: 2001,
 		left: 0,

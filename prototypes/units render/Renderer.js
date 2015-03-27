@@ -1,8 +1,8 @@
-function RenderManager(context, objMap, objUnits) {
+function RenderManager(contexts, objMap, objUnits /*, objUI */) {
 
 	console.log('new RenderManager');
 	
-	this.ctx = context;
+	this.ctxMap = context.Map;
 	this.map = objMap;
 	this.units = objUnits;
 	this.start = null;
@@ -18,22 +18,4 @@ RenderManager.prototype.renderAll = function() {
 	this.map.drawGrid();
 	if(this.units.arrUnits.length > 0)
 		this.units.arrUnits[0].render(this.ctx, this.map.offset);
-}
-
-RenderManager.prototype.renderUnits = function(now) {
-//updates units only, could be extended to include other non-static elements
-/* currently doesn't function as intended. It may be performance enhancing 
-to clear and redraw only where units have moved. This could work as follows:
-1. clear previous location of unit
-2. redraw background in previous location
-3. draw new location
-*/
-	window.requestAnimationFrame(this.renderUnits.bind(this));
-
-	this.map.resize();
-	this.map.drawGrid();
-	if(this.units.arrUnits.length > 0) {
-		this.units.arrUnits[0].update(now);
-		this.units.arrUnits[0].render(this.ctx, this.map.offset);
-	}
 }
