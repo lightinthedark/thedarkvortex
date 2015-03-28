@@ -2,8 +2,8 @@ function Map() {
 
 	console.log('new Map');
 	
-	this.width = 2001;
-	this.height = 2001;
+	this.width = 200.5;
+	this.height = 200.5;
 		
 }
 
@@ -14,42 +14,43 @@ Map.prototype.drawGrid = function(context, scale, offset) {
 	
 	context.clearRect(0, 0, window.innerWidth, window.innerHeight);
 	context.strokeStyle = "#000";
-	context.lineWidth = 1;
+	context.lineCap="round";
+	context.lineWidth = 1 * scale;
 
 	var view = {
-		width: 0 + window.innerWidth,
-		height: 0 + window.innerHeight
+		width: window.innerWidth,
+		height: window.innerHeight
 	};
 
 	
 	//draw verticals
-	for (var x = 0 + offset.x; x < this.width + offset.x; x += interval * scale) {
+	for (var x = 0 + offset.x; x < (this.width * scale) + offset.x; x += interval * scale) {
 		if (x > 0 && x < view.width) {
 			context.beginPath();
 			context.moveTo(x, Math.max(0, offset.y));
-			context.lineTo(x, Math.min(view.height, this.height + offset.y));
+			context.lineTo(x, Math.min(view.height, (this.height * scale) + offset.y));
 			context.stroke();
 		}
 	}
 
 	//draw verticals
-	for (var y = 0 + offset.y; y < this.height + offset.y; y += interval * scale) {
+	for (var y = 0 + offset.y; y < (this.height * scale) + offset.y; y += interval * scale) {
 		if (y > 0 && y < view.height) {
 			context.beginPath();
 			context.moveTo(Math.max(0, offset.x), y);
-			context.lineTo(Math.min(view.width, this.width + offset.x), y);
+			context.lineTo(Math.min(view.width, (this.width * scale) + offset.x), y);
 			context.stroke();
 		}
 	}
 	
 	//outline boundary
 	var boundary = {
-		top: -interval + offset.y,
-		bottom: interval + this.height + offset.y,
-		left: -interval + offset.x,
-		right: interval + this.width + offset.x
+		top: offset.y - (interval * scale),
+		bottom: offset.y + (this.height * scale) + (interval * scale),
+		left: offset.x - (interval * scale),
+		right: offset.x + (this.width * scale) + (interval * scale)
 	};
-	context.lineWidth = 1;
+	context.lineWidth = 1 * scale;
 	context.strokeStyle = "#000";
 	context.lineJoin="round";
 	context.beginPath();

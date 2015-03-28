@@ -16,7 +16,9 @@ function Renderer(cnvs, objMap, objUnits /*, objUI */) {
 	
 	//view properties
 	this.scale = 1;
-	this.offset = {x: 0, y: 0};
+	this.smoothScale = 1;
+	this.offset = {x: window.innerWidth / 2 - this.map.width / 2, y: window.innerHeight / 2 - this.map.height / 2};
+	this.smoothOffset = {x: window.innerWidth / 2 - this.map.width / 2, y: window.innerHeight / 2 - this.map.height / 2};
 	
 	//draw first view
 	this.resize();
@@ -27,7 +29,7 @@ function Renderer(cnvs, objMap, objUnits /*, objUI */) {
 
 
 Renderer.prototype.renderTerrain = function() {
-	this.map.drawGrid(this.ctxTerrain, this.scale, this.offset);
+	this.map.drawGrid(this.ctxTerrain, this.smoothScale, this.smoothOffset);
 }
 
 
@@ -45,6 +47,7 @@ Renderer.prototype.renderAll = function() {
 	this.renderTerrain();
 	this.renderUnits();
 	this.renderUI();
+	window.requestAnimationFrame(this.renderAll.bind(this));
 }
 
 Renderer.prototype.pan = function( moveX, moveY) {
@@ -52,26 +55,35 @@ Renderer.prototype.pan = function( moveX, moveY) {
 	//click handler calls this method whilst clicked
 	this.offset.x = moveX;
 	this.offset.y = moveY;
+
+	// updates both offset and smoothOffset variables to avoid lag
+	this.smoothOffset.x = moveX;
+	this.smoothOffset.y = moveY;
 	
 	//render view
 	this.renderAll();
 }
 
-Renderer.prototype.zoom = function() {
+Renderer.prototype.zoom = function(mag, focus) {
 
-	//click handler calls this method
-	//click handler stop listening to player input whilst zooming?
-	
-	//targetScale = new scale
-	//targetOffset = new offset based on click
-	//zoomSpeed = 0.1;
-	
-	//smoothScale = Lint (scale, targetScale, zoomSpeed);
-	//smoothOffset.x = Lint (offset.x, targetOffset.x, zoomSpeed);
-	//smoothOffset.y = Lint (offset.y, targetOffset.y, zoomSpeed);
+	if (mag != 1) {
+		this.scale = this.scale * mag;
+		this.offset.x += window.innerWidth / 2 - focus.x;
+		this.offset.y += window.innerHeight / 2 - focus.y;
+	}
 
-	//render view
-	this.renderAll();
+	//console.log(this.smoothScale);
+	if (this.scale != this.smoothScale) {
+		this.smoothScale = Lint(this.smoothScale, this.scale, 0.1);
+		this.smoothOffset.x = Lint(this.smoothOffset.x, this.offset.x, 0.1);
+		this.smoothOffset.y = Lint(this.smoothOffset.y, this.offset.y, 0.1);
+		this.renderAll();
+		window.requestAnimationFrame(this.zoom.bind(this, 1, focus));
+	} else {
+		// finalised move by setting offset to target
+		this.smoothOffset.x = this.offset.x;
+		this.smoothOffset.y = this.offset.y;
+	}
 }
 
 Renderer.prototype.resize = function() {

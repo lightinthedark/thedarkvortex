@@ -14,6 +14,14 @@ function ClickHandler(clickTarget, objUnits, objRenderer) {
 	});
 	
 	this.moveOffset();
+
+	$(this.clickLayer).on("dblclick", function(event) {
+		zoomFocus = { x: event.pageX, y: event.pageY };
+		if(event.altKey) 
+			this.renderer.zoom(0.8, zoomFocus);
+		else
+			this.renderer.zoom(1.25, zoomFocus);
+	}.bind(this));
 	
 };
 
