@@ -7,14 +7,14 @@ function Unit(rgb, size, startPos) {
 }
 
 Unit.prototype.addWaypoint = function(xPos, yPos, time) {
-	if (!time) time = new Date().getTime();
+	/*if (!time) time = new Date().getTime();
 	var wpNode = new Point(xPos, yPos, time);
 	console.log('waypoint added: ' + xPos + ', ' + yPos + ', ' + time);
-	this.waypoints.push(wpNode);
+	this.waypoints.push(wpNode);*/
 };
 
 Unit.prototype.update = function(timestamp) {
-		
+	/*
 	// provide current time when undefined
 	if (!timestamp) timestamp = new Date().getTime();
 	var lastWP = new Point (0, 0, 0);
@@ -58,10 +58,10 @@ Unit.prototype.update = function(timestamp) {
 			this.stationery = true;
 			return;
 		}
-	}
+	}*/
 };
 
-Unit.prototype.render = function(ctx, offset) {
+Unit.prototype.render = function(ctx, offset, scale) {
 	//console.log('render');
 	
 	this.update();

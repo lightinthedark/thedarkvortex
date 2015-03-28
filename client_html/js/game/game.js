@@ -8,7 +8,8 @@ function Game( ldrLoader ) {
 		];
 	this.units = new Units();
 	this.map = new Map();
-	this.renderer = new Renderer(this.canvases, this.map, this.units);
+	this.ui = new UI();
+	this.renderer = new Renderer(this.canvases, this.map, this.units, this.ui);
 	this.events = new ClickHandler("#clickLayer", this.units, this.renderer);
 	//this.loader = new Loader();
 	//this.loader.init();

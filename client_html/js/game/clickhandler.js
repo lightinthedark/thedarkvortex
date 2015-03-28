@@ -14,14 +14,7 @@ function ClickHandler(clickTarget, objUnits, objRenderer) {
 	});
 	
 	this.moveOffset();
-
-	$(this.clickLayer).on("dblclick", function(event) {
-		zoomFocus = { x: event.pageX, y: event.pageY };
-		if(event.altKey) 
-			this.renderer.zoom(0.8, zoomFocus);
-		else
-			this.renderer.zoom(1.25, zoomFocus);
-	}.bind(this));
+	this.zoomListener();
 	
 };
 
@@ -74,18 +67,14 @@ ClickHandler.prototype.moveOffset = function() {
 	}.bind(this));
 }
 
-/*ClickHandler.prototype.zoomIn = function(map) {
-	if (map.scale < 8) {
-		map.scale = map.scale * 2;
-	}
+ClickHandler.prototype.zoomListener = function() {
+	$(this.clickLayer).on("dblclick", function(event) {
+		zoomFocus = { x: event.pageX, y: event.pageY };
+		if(event.altKey) {
+			window.requestAnimationFrame(this.renderer.zoom.bind(this.renderer, 0.8, zoomFocus));
+		}
+		else {
+			window.requestAnimationFrame(this.renderer.zoom.bind(this.renderer, 1.25, zoomFocus));
+		}
+	}.bind(this));
 }
-
-ClickHandler.prototype.zoomOut = function(map) {
-	if (map.scale > 0.25) {
-		map.scale = map.scale / 2;
-	}
-}
-
-ClickHandler.prototype.moveUnit = function() {
-	console.log('moveunit');
-}*/

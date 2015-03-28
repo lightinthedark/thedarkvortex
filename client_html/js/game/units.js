@@ -1,13 +1,13 @@
 function Units() {
-	this.arrUnits = [];		
+	//this.arrUnits = [];		
 }
 
 Units.prototype.addUnit = function(rgb, size, startPos) {
-	this.arrUnits.push(new Unit(rgb, size, startPos));
+	//this.arrUnits.push(new Unit(rgb, size, startPos));
 };
 
 Units.prototype.updateAll = function() {
-	for (var i = 0; i < this.arrUnits.length; i++) {
+	/*for (var i = 0; i < this.arrUnits.length; i++) {
 		this.arrUnits[i].update();
-	}
+	}*/
 }

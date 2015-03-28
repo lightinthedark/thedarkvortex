@@ -1,4 +1,4 @@
-function Renderer(cnvs, objMap, objUnits /*, objUI */) {
+function Renderer(cnvs, objMap, objUnits, objUI) {
 
 	console.log('new Renderer');
 	
@@ -13,23 +13,62 @@ function Renderer(cnvs, objMap, objUnits /*, objUI */) {
 	//objects refs
 	this.map = objMap;
 	this.units = objUnits;
+	this.ui = objUI;
 	
 	//view properties
+	this.view = {width: window.innerWidth, height: window.innerHeight};
 	this.scale = 1;
 	this.smoothScale = 1;
-	this.offset = {x: window.innerWidth / 2 - this.map.width / 2, y: window.innerHeight / 2 - this.map.height / 2};
-	this.smoothOffset = {x: window.innerWidth / 2 - this.map.width / 2, y: window.innerHeight / 2 - this.map.height / 2};
+	this.offset = {x: this.view.width / 2 - this.map.width / 2, y: this.view.height / 2 - this.map.height / 2};
+	this.smoothOffset = {x: this.view.width / 2 - this.map.width / 2, y: this.view.height / 2 - this.map.height / 2};
 	
 	//draw first view
 	this.resize();
 
 	//render loops
-	$(window).resize( function(){ this.resize(); this.renderAll() }.bind(this) );
+	$(window).resize( this.resize.bind(this) );
 };
 
 
+// R E S I Z E   C A N V A S E S
+
+Renderer.prototype.resize = function() {
+//Resize canvas to fit window
+	
+	//update cached window size
+	this.view.width = window.innerWidth;
+	this.view.height = window.innerHeight;
+
+	//resize canvas elements
+	for (var i = 0; i < this.canvases.length; i++) {
+		this.canvases[i].width = this.view.width;
+		this.canvases[i].height = this.view.height;
+	}
+
+	//redraw view
+	this.renderAll();
+}
+
+
+// C L E A R   C A N V A S E S
+
+Renderer.prototype.clearCtx = function(ctx) {
+	ctx.clearRect(0, 0, this.view.width, this.view.height);
+}
+
+
+Renderer.prototype.renderAll = function() {
+	this.renderTerrain();
+	this.renderUnits();
+	this.renderUI();
+}
+
+
+// R E N D E R   L A Y E R S
+
 Renderer.prototype.renderTerrain = function() {
-	this.map.drawGrid(this.ctxTerrain, this.smoothScale, this.smoothOffset);
+	this.clearCtx(this.ctxTerrain);
+	this.map.drawGrid(this.ctxTerrain, this.smoothScale, this.smoothOffset, this.view);
 }
 
 
@@ -40,15 +79,12 @@ Renderer.prototype.renderUnits = function() {
 
 Renderer.prototype.renderUI = function() {	
 	//Render UI
+	this.clearCtx(this.ctxUI);
+	this.ui.drawScale(this.ctxUI, this.scale, this.view);
 }
 
 
-Renderer.prototype.renderAll = function() {
-	this.renderTerrain();
-	this.renderUnits();
-	this.renderUI();
-	window.requestAnimationFrame(this.renderAll.bind(this));
-}
+// M O V E   V I E W   P A R A M S
 
 Renderer.prototype.pan = function( moveX, moveY) {
 
@@ -62,36 +98,30 @@ Renderer.prototype.pan = function( moveX, moveY) {
 	
 	//render view
 	this.renderAll();
-}
-
-Renderer.prototype.zoom = function(mag, focus) {
-
-	if (mag != 1) {
-		this.scale = this.scale * mag;
-		this.offset.x += window.innerWidth / 2 - focus.x;
-		this.offset.y += window.innerHeight / 2 - focus.y;
-	}
-
-	//console.log(this.smoothScale);
-	if (this.scale != this.smoothScale) {
-		this.smoothScale = Lint(this.smoothScale, this.scale, 0.1);
-		this.smoothOffset.x = Lint(this.smoothOffset.x, this.offset.x, 0.1);
-		this.smoothOffset.y = Lint(this.smoothOffset.y, this.offset.y, 0.1);
-		this.renderAll();
-		window.requestAnimationFrame(this.zoom.bind(this, 1, focus));
-	} else {
-		// finalised move by setting offset to target
-		this.smoothOffset.x = this.offset.x;
-		this.smoothOffset.y = this.offset.y;
-	}
-}
-
-Renderer.prototype.resize = function() {
-//Resize canvas to fit window
 	
-	for (var i = 0; i < this.canvases.length; i++) {
-		this.canvases[i].width = window.innerWidth;
-		this.canvases[i].height = window.innerHeight;
+}
+
+Renderer.prototype.zoom = function(mag, focus, start, timestamp) {
+
+	if (!timestamp) {
+		this.scale = this.scale * mag;
+		this.offset.x += this.view.width / 2 - focus.x;
+		this.offset.y += this.view.height / 2 - focus.y;
+		window.requestAnimationFrame(this.zoom.bind(this, mag, focus, start));
+	} else {
+		if (this.scale != this.smoothScale) {
+			var progress = timestamp - start;
+			var interpAmount = 1 / progress;
+			this.smoothScale = Lint(this.smoothScale, this.scale, interpAmount, 0.001);
+			this.smoothOffset.x = Lint(this.smoothOffset.x, this.offset.x, interpAmount, 0.001);
+			this.smoothOffset.y = Lint(this.smoothOffset.y, this.offset.y, interpAmount, 0.001);
+			this.renderAll();
+			window.requestAnimationFrame(this.zoom.bind(this, mag, focus, timestamp));
+		} else {
+			// complete pan movement when scale has reached target 
+			this.smoothOffset.x = this.offset.x;
+			this.smoothOffset.y = this.offset.y;
+			return;
+		}
 	}
-	this.renderAll();
 }
