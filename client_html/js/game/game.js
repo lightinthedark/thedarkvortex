@@ -7,10 +7,14 @@ function Game( ldrLoader ) {
 		document.getElementById('ui')
 		];
 	this.units = new Units();
+
+	//For development purposes only (add units)
+	this.units.addUnit ('firstUnit', "#000", 10, 1000, 1000);
+
 	this.map = new Map();
 	this.ui = new UI();
 	this.renderer = new Renderer(this.canvases, this.map, this.units, this.ui);
-	this.events = new ClickHandler("#clickLayer", this.units, this.renderer);
+	this.click = new ClickHandler("#clickLayer", this.units, this.renderer);
 	//this.loader = new Loader();
 	//this.loader.init();
 }

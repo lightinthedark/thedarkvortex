@@ -1,9 +1,11 @@
 function Units() {
-	//this.arrUnits = [];		
+	//this.arrUnits = [];
+	this.objUnits = {};
 }
 
-Units.prototype.addUnit = function(rgb, size, startPos) {
-	//this.arrUnits.push(new Unit(rgb, size, startPos));
+Units.prototype.addUnit = function(ident, c, s, px, py) {
+	var unitName = ident.toString();
+	this.objUnits[unitName] = new Unit (c, s, new Point(px, py, new Date().getTime() ) );
 };
 
 Units.prototype.updateAll = function() {

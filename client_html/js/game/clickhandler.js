@@ -6,19 +6,19 @@ function ClickHandler(clickTarget, objUnits, objRenderer) {
 	this.clickLayer = clickTarget;
 	this.units = objUnits;
 	this.renderer = objRenderer;
-	this.selected; //stores reference to selected unit
+	this.objSelected; //stores reference to selected unit
 	
 	//cancel right click
 	$(document).on('contextmenu', function() {
     return false;
 	});
 	
-	this.moveOffset();
+	this.mouseClick();
 	this.zoomListener();
 	
 };
 
-ClickHandler.prototype.moveOffset = function() {
+ClickHandler.prototype.mouseClick = function() {
 // Transform offset on mouse click and move
 
 	var clicking = false;
@@ -35,13 +35,15 @@ ClickHandler.prototype.moveOffset = function() {
 				y: event.pageY - this.renderer.offset.y
 			};
 		}
-		/*if(event.which == 3) {
+		if(event.which == 3) {
 			//FOR PROTOTYPE PURPOSES ONLY
 			//right click to add waypoint
 			var now = new Date().getTime();
-			game.units.arrUnits[0].addWaypoint(event.pageX - map.offset.x, event.pageY - map.offset.y, now + 5000);			
-			//console.log(game.units.arrUnits[0]);
-		}*/
+			var offset = this.renderer.offset;
+			var scale = this.renderer.scale;
+			this.units.objUnits.firstUnit.addWaypoint((event.pageX / scale) - (offset.x / scale), (event.pageY / scale) - (offset.y / scale), now + 5000);
+			this.renderer.renderUnits();
+		}
 	}.bind(this));
 	
 	$(this.clickLayer).mouseup(function() {

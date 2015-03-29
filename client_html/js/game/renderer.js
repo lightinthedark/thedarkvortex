@@ -8,7 +8,7 @@ function Renderer(cnvs, objMap, objUnits, objUI) {
 	//canvas contexts
 	this.ctxTerrain = this.canvases[0].getContext('2d');
 	this.ctxUnits = this.canvases[1].getContext('2d');
-	this.ctxUI = this.canvases[1].getContext('2d');
+	this.ctxUI = this.canvases[2].getContext('2d');
 	
 	//objects refs
 	this.map = objMap;
@@ -73,7 +73,33 @@ Renderer.prototype.renderTerrain = function() {
 
 
 Renderer.prototype.renderUnits = function() {	
+	//clear units layer
+	this.clearCtx(this.ctxUnits);
+
 	//Render units
+	var u;
+	var units = this.units.objUnits;
+	var moving = false;
+	var redraw = false;
+
+	for (var u in units) {
+		if(units.hasOwnProperty(u)) {
+			moving = units[u].update();
+			units[u].render(this.ctxUnits, this.smoothOffset, this.smoothScale);
+			if (moving)
+				redraw = true;
+		}
+    }
+
+    /*
+    Recursive call (below) resulted in stuttering when units moving whilst user zooming, 
+    presumably because both actions call this method. Second condition of if statement 
+    (also below) gets around this by ensuring zoom scale is unchanging. There may be a
+    more elegant solution!
+    */
+
+    if(redraw && this.scale == this.smoothScale)
+    	window.requestAnimationFrame(this.renderUnits.bind(this));
 }
 
 

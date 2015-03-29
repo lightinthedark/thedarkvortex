@@ -2,8 +2,8 @@ function Map() {
 
 	console.log('new Map');
 	
-	this.width = 201;
-	this.height = 201;
+	this.width = 2001;
+	this.height = 2001;
 		
 }
 
@@ -34,7 +34,7 @@ Map.prototype.drawGrid = function(context, scale, offset, view) {
 		}
 	}
 	
-	/*//outline boundary
+	//outline boundary
 	var boundary = {
 		top: offset.y - (interval * scale),
 		bottom: offset.y + (this.height * scale) + (interval * scale),
@@ -48,7 +48,8 @@ Map.prototype.drawGrid = function(context, scale, offset, view) {
 	context.lineTo(boundary.right, boundary.top);
 	context.lineTo(boundary.right, boundary.bottom);
 	context.lineTo(boundary.left, boundary.bottom);
-	context.lineTo(boundary.left, boundary.top);*/
+	context.lineTo(boundary.left, boundary.top);
+
 	context.stroke();
 	
 }
